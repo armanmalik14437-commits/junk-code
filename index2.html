@@ -1,0 +1,884 @@
+1   | <!DOCTYPE html>
+2   | <html lang="en">
+3   | <head>
+4   | <meta charset="UTF-8"/>
+5   | <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+6   | <title>NEXUS Notes</title>
+7   | <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+8   | <style>
+9   | 
+10  | /* === VARIABLES === */
+11  | :root {
+12  |   --bg:       #07070f;
+13  |   --surface:  #0f0f1e;
+14  |   --surface2: #141428;
+15  |   --border:   rgba(255,255,255,0.07);
+16  |   --cyan:     #00f5ff;
+17  |   --violet:   #bf00ff;
+18  |   --pink:     #ff0080;
+19  |   --green:    #00ff88;
+20  |   --gold:     #ffd700;
+21  |   --text:     #e8e8f8;
+22  |   --dim:      rgba(232,232,248,0.4);
+23  |   --ghost:    rgba(232,232,248,0.15);
+24  | }
+25  | 
+26  | /* === RESET === */
+27  | *, *::before, *::after {
+28  |   margin: 0; padding: 0;
+29  |   box-sizing: border-box;
+30  | }
+31  | 
+32  | html { scroll-behavior: smooth; }
+33  | 
+34  | body {
+35  |   background: var(--bg);
+36  |   color: var(--text);
+37  |   font-family: 'Rajdhani', sans-serif;
+38  |   min-height: 100vh;
+39  |   display: flex;
+40  |   overflow-x: hidden;
+41  | }
+42  | 
+43  | ::-webkit-scrollbar { width: 4px; }
+44  | ::-webkit-scrollbar-thumb {
+45  |   background: rgba(0,245,255,0.2);
+46  |   border-radius: 2px;
+47  | }
+48  | 
+49  | ::selection {
+50  |   background: rgba(0,245,255,0.2);
+51  |   color: var(--cyan);
+52  | }
+53  | 
+54  | /* === SIDEBAR === */
+55  | .sidebar {
+56  |   width: 260px;
+57  |   min-height: 100vh;
+58  |   background: var(--surface);
+59  |   border-right: 1px solid var(--border);
+60  |   display: flex;
+61  |   flex-direction: column;
+62  |   padding: 20px 14px;
+63  |   flex-shrink: 0;
+64  |   position: sticky;
+65  |   top: 0;
+66  |   height: 100vh;
+67  |   overflow-y: auto;
+68  | }
+69  | 
+70  | .sidebar-logo {
+71  |   font-family: 'Orbitron', monospace;
+72  |   font-size: 1rem;
+73  |   font-weight: 700;
+74  |   letter-spacing: 0.12em;
+75  |   background: linear-gradient(90deg, var(--cyan), var(--violet));
+76  |   -webkit-background-clip: text;
+77  |   -webkit-text-fill-color: transparent;
+78  |   margin-bottom: 24px;
+79  |   padding-left: 6px;
+80  | }
+81  | 
+82  | .new-note-btn {
+83  |   width: 100%;
+84  |   padding: 11px;
+85  |   background: linear-gradient(135deg,
+86  |     rgba(0,245,255,0.15),
+87  |     rgba(191,0,255,0.15));
+88  |   border: 1px solid rgba(0,245,255,0.3);
+89  |   border-radius: 12px;
+90  |   color: var(--cyan);
+91  |   font-family: 'Orbitron', monospace;
+92  |   font-size: 0.6rem;
+93  |   letter-spacing: 0.15em;
+94  |   cursor: pointer;
+95  |   transition: all 0.2s;
+96  |   margin-bottom: 20px;
+97  |   text-transform: uppercase;
+98  | }
+99  | 
+100 | .new-note-btn:hover {
+101 |   box-shadow: 0 0 20px rgba(0,245,255,0.2);
+102 |   transform: translateY(-1px);
+103 | }
+104 | 
+105 | .search-wrap {
+106 |   position: relative;
+107 |   margin-bottom: 18px;
+108 | }
+109 | 
+110 | .search-field {
+111 |   width: 100%;
+112 |   background: #080810;
+113 |   border: 1px solid var(--border);
+114 |   border-radius: 10px;
+115 |   padding: 9px 14px 9px 34px;
+116 |   color: var(--text);
+117 |   font-family: 'Rajdhani', sans-serif;
+118 |   font-size: 0.85rem;
+119 |   outline: none;
+120 |   transition: all 0.2s;
+121 | }
+122 | 
+123 | .search-field::placeholder { color: var(--ghost); }
+124 | 
+125 | .search-field:focus {
+126 |   border-color: rgba(0,245,255,0.3);
+127 |   box-shadow: 0 0 10px rgba(0,245,255,0.06);
+128 | }
+129 | 
+130 | .search-icon {
+131 |   position: absolute;
+132 |   left: 11px; top: 50%;
+133 |   transform: translateY(-50%);
+134 |   color: var(--ghost);
+135 |   font-size: 0.8rem;
+136 |   pointer-events: none;
+137 | }
+138 | 
+139 | .sidebar-label {
+140 |   font-size: 0.5rem;
+141 |   letter-spacing: 0.3em;
+142 |   color: var(--ghost);
+143 |   text-transform: uppercase;
+144 |   padding: 0 6px;
+145 |   margin-bottom: 8px;
+146 |   margin-top: 14px;
+147 | }
+148 | 
+149 | .tag-list {
+150 |   display: flex;
+151 |   flex-wrap: wrap;
+152 |   gap: 6px;
+153 |   margin-bottom: 16px;
+154 | }
+155 | 
+156 | .tag-chip {
+157 |   font-size: 0.58rem;
+158 |   letter-spacing: 0.1em;
+159 |   padding: 4px 10px;
+160 |   border-radius: 20px;
+161 |   border: 1px solid var(--border);
+162 |   background: rgba(255,255,255,0.03);
+163 |   color: var(--dim);
+164 |   cursor: pointer;
+165 |   transition: all 0.2s;
+166 |   text-transform: uppercase;
+167 | }
+168 | 
+169 | .tag-chip.active {
+170 |   border-color: rgba(0,245,255,0.4);
+171 |   color: var(--cyan);
+172 |   background: rgba(0,245,255,0.08);
+173 | }
+174 | 
+175 | .tag-chip:hover:not(.active) {
+176 |   color: var(--text);
+177 |   border-color: rgba(255,255,255,0.15);
+178 | }
+179 | 
+180 | .note-list {
+181 |   display: flex;
+182 |   flex-direction: column;
+183 |   gap: 6px;
+184 |   flex: 1;
+185 |   overflow-y: auto;
+186 | }
+187 | 
+188 | .note-item {
+189 |   padding: 12px 10px;
+190 |   border-radius: 10px;
+191 |   border: 1px solid transparent;
+192 |   cursor: pointer;
+193 |   transition: all 0.2s;
+194 | }
+195 | 
+196 | .note-item:hover {
+197 |   background: rgba(255,255,255,0.03);
+198 |   border-color: var(--border);
+199 | }
+200 | 
+201 | .note-item.active {
+202 |   background: rgba(0,245,255,0.06);
+203 |   border-color: rgba(0,245,255,0.2);
+204 | }
+205 | 
+206 | .note-item-title {
+207 |   font-size: 0.85rem;
+208 |   font-weight: 600;
+209 |   color: var(--text);
+210 |   margin-bottom: 4px;
+211 |   white-space: nowrap;
+212 |   overflow: hidden;
+213 |   text-overflow: ellipsis;
+214 | }
+215 | 
+216 | .note-item-preview {
+217 |   font-size: 0.72rem;
+218 |   color: var(--dim);
+219 |   white-space: nowrap;
+220 |   overflow: hidden;
+221 |   text-overflow: ellipsis;
+222 |   margin-bottom: 6px;
+223 | }
+224 | 
+225 | .note-item-meta {
+226 |   display: flex;
+227 |   align-items: center;
+228 |   justify-content: space-between;
+229 |   gap: 6px;
+230 | }
+231 | 
+232 | .note-item-date {
+233 |   font-size: 0.55rem;
+234 |   color: var(--ghost);
+235 |   letter-spacing: 0.08em;
+236 | }
+237 | 
+238 | .note-tag {
+239 |   font-size: 0.5rem;
+240 |   letter-spacing: 0.08em;
+241 |   padding: 2px 7px;
+242 |   border-radius: 10px;
+243 |   text-transform: uppercase;
+244 | }
+245 | 
+246 | /* === MAIN AREA === */
+247 | .main {
+248 |   flex: 1;
+249 |   display: flex;
+250 |   flex-direction: column;
+251 |   min-height: 100vh;
+252 |   padding: 28px;
+253 |   max-width: 800px;
+254 | }
+255 | 
+256 | .main-topbar {
+257 |   display: flex;
+258 |   align-items: center;
+259 |   justify-content: space-between;
+260 |   margin-bottom: 24px;
+261 | }
+262 | 
+263 | .note-title-input {
+264 |   flex: 1;
+265 |   background: none;
+266 |   border: none;
+267 |   outline: none;
+268 |   font-family: 'Orbitron', monospace;
+269 |   font-size: 1.4rem;
+270 |   font-weight: 700;
+271 |   color: var(--text);
+272 |   letter-spacing: 0.05em;
+273 | }
+274 | 
+275 | .note-title-input::placeholder { color: var(--ghost); }
+276 | 
+277 | .topbar-actions {
+278 |   display: flex;
+279 |   gap: 8px;
+280 | }
+281 | 
+282 | .action-btn {
+283 |   width: 36px; height: 36px;
+284 |   border-radius: 10px;
+285 |   background: var(--surface);
+286 |   border: 1px solid var(--border);
+287 |   color: var(--dim);
+288 |   font-size: 0.9rem;
+289 |   cursor: pointer;
+290 |   transition: all 0.2s;
+291 |   display: flex;
+292 |   align-items: center;
+293 |   justify-content: center;
+294 | }
+295 | 
+296 | .action-btn:hover {
+297 |   border-color: rgba(0,245,255,0.3);
+298 |   color: var(--cyan);
+299 |   box-shadow: 0 0 12px rgba(0,245,255,0.1);
+300 | }301 | 
+302 | .action-btn.danger:hover {
+303 |   border-color: rgba(255,0,128,0.3);
+304 |   color: var(--pink);
+305 |   box-shadow: 0 0 12px rgba(255,0,128,0.1);
+306 | }
+307 | 
+308 | .note-meta-bar {
+309 |   display: flex;
+310 |   align-items: center;
+311 |   gap: 12px;
+312 |   margin-bottom: 16px;
+313 |   padding-bottom: 14px;
+314 |   border-bottom: 1px solid var(--border);
+315 | }
+316 | 
+317 | .meta-date {
+318 |   font-size: 0.62rem;
+319 |   letter-spacing: 0.12em;
+320 |   color: var(--ghost);
+321 |   text-transform: uppercase;
+322 | }
+323 | 
+324 | .meta-tag-select {
+325 |   background: var(--surface);
+326 |   border: 1px solid var(--border);
+327 |   border-radius: 8px;
+328 |   padding: 4px 10px;
+329 |   color: var(--dim);
+330 |   font-family: 'Rajdhani', sans-serif;
+331 |   font-size: 0.7rem;
+332 |   outline: none;
+333 |   cursor: pointer;
+334 |   transition: all 0.2s;
+335 | }
+336 | 
+337 | .meta-tag-select:focus {
+338 |   border-color: rgba(0,245,255,0.3);
+339 |   color: var(--cyan);
+340 | }
+341 | 
+342 | .word-count {
+343 |   font-size: 0.58rem;
+344 |   letter-spacing: 0.1em;
+345 |   color: var(--ghost);
+346 |   margin-left: auto;
+347 | }
+348 | 
+349 | /* === TOOLBAR === */
+350 | .toolbar {
+351 |   display: flex;
+352 |   gap: 4px;
+353 |   flex-wrap: wrap;
+354 |   margin-bottom: 14px;
+355 |   padding: 10px 12px;
+356 |   background: var(--surface);
+357 |   border: 1px solid var(--border);
+358 |   border-radius: 12px;
+359 | }
+360 | 
+361 | .tool-btn {
+362 |   width: 32px; height: 32px;
+363 |   border-radius: 7px;
+364 |   background: transparent;
+365 |   border: 1px solid transparent;
+366 |   color: var(--dim);
+367 |   font-size: 0.85rem;
+368 |   cursor: pointer;
+369 |   transition: all 0.15s;
+370 |   display: flex;
+371 |   align-items: center;
+372 |   justify-content: center;
+373 | }
+374 | 
+375 | .tool-btn:hover {
+376 |   background: rgba(0,245,255,0.08);
+377 |   border-color: rgba(0,245,255,0.2);
+378 |   color: var(--cyan);
+379 | }
+380 | 
+381 | .tool-btn.active {
+382 |   background: rgba(0,245,255,0.12);
+383 |   border-color: rgba(0,245,255,0.3);
+384 |   color: var(--cyan);
+385 | }
+386 | 
+387 | .tool-divider {
+388 |   width: 1px;
+389 |   height: 24px;
+390 |   background: var(--border);
+391 |   margin: 0 4px;
+392 |   align-self: center;
+393 | }
+394 | 
+395 | /* === EDITOR === */
+396 | .editor-wrap {
+397 |   flex: 1;
+398 |   background: var(--surface);
+399 |   border: 1px solid var(--border);
+400 |   border-radius: 14px;
+401 |   padding: 20px;
+402 |   min-height: 400px;
+403 |   transition: border-color 0.2s;
+404 | }
+405 | 
+406 | .editor-wrap:focus-within {
+407 |   border-color: rgba(0,245,255,0.2);
+408 | }
+409 | 
+410 | .editor {
+411 |   width: 100%;
+412 |   min-height: 360px;
+413 |   background: none;
+414 |   border: none;
+415 |   outline: none;
+416 |   color: var(--text);
+417 |   font-family: 'Rajdhani', sans-serif;
+418 |   font-size: 1rem;
+419 |   line-height: 1.8;
+420 |   resize: none;
+421 |   letter-spacing: 0.02em;
+422 | }
+423 | 
+424 | .editor::placeholder { color: var(--ghost); }
+425 | 
+426 | /* === EMPTY STATE === */
+427 | .empty-state {
+428 |   flex: 1;
+429 |   display: flex;
+430 |   flex-direction: column;
+431 |   align-items: center;
+432 |   justify-content: center;
+433 |   text-align: center;
+434 |   padding: 40px;
+435 | }
+436 | 
+437 | .empty-icon {
+438 |   font-size: 3rem;
+439 |   margin-bottom: 16px;
+440 |   opacity: 0.25;
+441 | }
+442 | 
+443 | .empty-title {
+444 |   font-family: 'Orbitron', monospace;
+445 |   font-size: 0.9rem;
+446 |   letter-spacing: 0.15em;
+447 |   color: var(--dim);
+448 |   margin-bottom: 8px;
+449 | }
+450 | 
+451 | .empty-sub {
+452 |   font-size: 0.78rem;
+453 |   color: var(--ghost);
+454 |   letter-spacing: 0.05em;
+455 | }
+456 | 
+457 | /* === TOAST === */
+458 | .toast {
+459 |   position: fixed;
+460 |   bottom: 24px; left: 50%;
+461 |   transform: translateX(-50%) translateY(60px);
+462 |   background: rgba(7,7,15,0.92);
+463 |   border: 1px solid rgba(0,245,255,0.3);
+464 |   border-radius: 12px;
+465 |   padding: 10px 22px;
+466 |   font-family: 'Orbitron', monospace;
+467 |   font-size: 0.6rem;
+468 |   letter-spacing: 0.12em;
+469 |   color: var(--cyan);
+470 |   backdrop-filter: blur(20px);
+471 |   box-shadow: 0 0 20px rgba(0,245,255,0.15);
+472 |   transition: transform 0.3s, opacity 0.3s;
+473 |   opacity: 0;
+474 |   z-index: 999;
+475 | }
+476 | 
+477 | .toast.show {
+478 |   transform: translateX(-50%) translateY(0);
+479 |   opacity: 1;
+480 | }
+481 | 
+482 | /* === STATS BAR === */
+483 | .stats-bar {
+484 |   display: flex;
+485 |   gap: 16px;
+486 |   padding: 14px 0;
+487 |   border-top: 1px solid var(--border);
+488 |   margin-top: 16px;
+489 | }
+490 | 
+491 | .stat-item {
+492 |   display: flex;
+493 |   flex-direction: column;
+494 |   align-items: center;
+495 |   gap: 3px;
+496 | }
+497 | 
+498 | .stat-val {
+499 |   font-family: 'Orbitron', monospace;
+500 |   font-size: 1rem;
+501 |   font-weight: 700;
+502 |   color: var(--cyan);
+503 | }
+504 | 
+505 | .stat-lbl {
+506 |   font-size: 0.5rem;
+507 |   letter-spacing: 0.15em;
+508 |   color: var(--ghost);
+509 |   text-transform: uppercase;
+510 | }
+511 | 
+512 | /* === MOBILE === */
+513 | @media (max-width: 640px) {
+514 |   .sidebar { display: none; }
+515 |   .main { padding: 16px; }
+516 | }
+517 | 
+518 | /* === ANIMATIONS === */
+519 | @keyframes fadeUp {
+520 |   from { opacity:0; transform:translateY(12px); }
+521 |   to   { opacity:1; transform:translateY(0); }
+522 | }
+523 | 
+524 | .note-item {
+525 |   animation: fadeUp 0.3s ease both;
+526 | }
+527 | 
+528 | </style>
+529 | </head>
+530 | <body>
+531 | 
+532 | <!-- SIDEBAR -->
+533 | <div class="sidebar">
+534 |   <div class="sidebar-logo">⬡ NEXUS NOTES</div>
+535 | 
+536 |   <button class="new-note-btn" onclick="newNote()">+ New Note</button>
+537 | 
+538 |   <div class="search-wrap">
+539 |     <span class="search-icon">⌕</span>
+540 |     <input class="search-field" id="searchField"
+541 |       placeholder="Search notes..."
+542 |       oninput="renderList()"/>
+543 |   </div>
+544 | 
+545 |   <div class="sidebar-label">Tags</div>
+546 |   <div class="tag-list" id="tagList">
+547 |     <div class="tag-chip active" data-tag="All" onclick="setTag(this)">All</div>
+548 |     <div class="tag-chip" data-tag="Work"     onclick="setTag(this)">💼 Work</div>
+549 |     <div class="tag-chip" data-tag="Personal" onclick="setTag(this)">🌟 Personal</div>
+550 |     <div class="tag-chip" data-tag="Ideas"    onclick="setTag(this)">💡 Ideas</div>
+551 |     <div class="tag-chip" data-tag="Code"     onclick="setTag(this)">⚡ Code</div>
+552 |   </div>
+553 | 
+554 |   <div class="sidebar-label">Notes</div>
+555 |   <div class="note-list" id="noteList"></div>
+556 | 
+557 |   <div class="stats-bar">
+558 |     <div class="stat-item">
+559 |       <div class="stat-val" id="statTotal">0</div>
+560 |       <div class="stat-lbl">Total</div>
+561 |     </div>
+562 |     <div class="stat-item">
+563 |       <div class="stat-val" id="statWords">0</div>
+564 |       <div class="stat-lbl">Words</div>
+565 |     </div>
+566 |     <div class="stat-item">
+567 |       <div class="stat-val" id="statToday">0</div>
+568 |       <div class="stat-lbl">Today</div>
+569 |     </div>
+570 |   </div>
+571 | </div>
+572 | 
+573 | <!-- MAIN EDITOR -->
+574 | <div class="main" id="mainArea">
+575 | 
+576 |   <!-- Empty State -->
+577 |   <div class="empty-state" id="emptyState">
+578 |     <div class="empty-icon">📝</div>
+579 |     <div class="empty-title">No Note Selected</div>
+580 |     <div class="empty-sub">Create a new note or select one from the list</div>
+581 |   </div>
+582 | 
+583 |   <!-- Editor Panel -->
+584 |   <div id="editorPanel" style="display:none; flex-direction:column; flex:1;">
+585 | 
+586 |     <div class="main-topbar">
+587 |       <input class="note-title-input" id="noteTitle"
+588 |         placeholder="Note title..."
+589 |         oninput="saveCurrentNote()"/>
+590 |       <div class="topbar-actions">
+591 |         <button class="action-btn" onclick="copyNote()" title="Copy">⧉</button>
+592 |         <button class="action-btn" onclick="pinNote()" title="Pin" id="pinBtn">📌</button>
+593 |         <button class="action-btn danger" onclick="deleteNote()" title="Delete">✕</button>
+594 |       </div>
+595 |     </div>
+596 | 
+597 |     <div class="note-meta-bar">
+598 |       <span class="meta-date" id="metaDate">—</span>
+599 |       <select class="meta-tag-select" id="metaTag" onchange="saveCurrentNote()">
+600 |         <option value="Work">💼 Work</option>601 |         <option value="Personal">🌟 Personal</option>
+602 |         <option value="Ideas">💡 Ideas</option>
+603 |         <option value="Code">⚡ Code</option>
+604 |       </select>
+605 |       <span class="word-count" id="wordCount">0 words</span>
+606 |     </div>
+607 | 
+608 |     <div class="toolbar">
+609 |       <button class="tool-btn" onclick="fmt('bold')"        title="Bold">𝐁</button>
+610 |       <button class="tool-btn" onclick="fmt('italic')"      title="Italic">𝐼</button>
+611 |       <button class="tool-btn" onclick="fmt('underline')"   title="Underline">U̲</button>
+612 |       <div class="tool-divider"></div>
+613 |       <button class="tool-btn" onclick="fmtBlock('h1')"     title="H1">H1</button>
+614 |       <button class="tool-btn" onclick="fmtBlock('h2')"     title="H2">H2</button>
+615 |       <div class="tool-divider"></div>
+616 |       <button class="tool-btn" onclick="fmtBlock('ul')"     title="Bullet">•</button>
+617 |       <button class="tool-btn" onclick="fmtBlock('ol')"     title="Numbered">1.</button>
+618 |       <div class="tool-divider"></div>
+619 |       <button class="tool-btn" onclick="fmtBlock('quote')"  title="Quote">❝</button>
+620 |       <button class="tool-btn" onclick="fmtBlock('code')"   title="Code">{ }</button>
+621 |       <div class="tool-divider"></div>
+622 |       <button class="tool-btn" onclick="clearFormat()"      title="Clear">✕</button>
+623 |     </div>
+624 | 
+625 |     <div class="editor-wrap">
+626 |       <textarea class="editor" id="noteEditor"
+627 |         placeholder="Start writing your note..."
+628 |         oninput="saveCurrentNote(); updateWordCount()">
+629 |       </textarea>
+630 |     </div>
+631 | 
+632 |   </div>
+633 | </div>
+634 | 
+635 | <!-- TOAST -->
+636 | <div class="toast" id="toast"></div>
+637 | 
+638 | <script>
+639 | 
+640 | /* === DATA === */
+641 | let notes       = JSON.parse(localStorage.getItem('nexus_notes') || '[]');
+642 | let activeId    = null;
+643 | let activeTag   = 'All';
+644 | let saveTimer   = null;
+645 | 
+646 | const TAG_COLORS = {
+647 |   Work:     { bg:'rgba(0,245,255,0.08)',  border:'rgba(0,245,255,0.25)',  color:'#00f5ff' },
+648 |   Personal: { bg:'rgba(191,0,255,0.08)', border:'rgba(191,0,255,0.25)', color:'#bf00ff' },
+649 |   Ideas:    { bg:'rgba(255,215,0,0.08)', border:'rgba(255,215,0,0.25)', color:'#ffd700' },
+650 |   Code:     { bg:'rgba(0,255,136,0.08)', border:'rgba(0,255,136,0.25)', color:'#00ff88' },
+651 | };
+652 | 
+653 | /* === HELPERS === */
+654 | function getDate() {
+655 |   return new Date().toLocaleDateString('en-IN', {
+656 |     day:'numeric', month:'short', year:'numeric'
+657 |   });
+658 | }
+659 | 
+660 | function getTime() {
+661 |   return new Date().toLocaleTimeString('en-IN', {
+662 |     hour:'2-digit', minute:'2-digit'
+663 |   });
+664 | }
+665 | 
+666 | function isToday(dateStr) {
+667 |   return dateStr === getDate();
+668 | }
+669 | 
+670 | function save() {
+671 |   localStorage.setItem('nexus_notes', JSON.stringify(notes));
+672 | }
+673 | 
+674 | function showToast(msg) {
+675 |   const t = document.getElementById('toast');
+676 |   t.textContent = msg;
+677 |   t.classList.add('show');
+678 |   clearTimeout(window._toast);
+679 |   window._toast = setTimeout(() => t.classList.remove('show'), 2200);
+680 | }
+681 | 
+682 | /* === NEW NOTE === */
+683 | function newNote() {
+684 |   const note = {
+685 |     id:      Date.now(),
+686 |     title:   '',
+687 |     content: '',
+688 |     tag:     'Ideas',
+689 |     date:    getDate(),
+690 |     time:    getTime(),
+691 |     pinned:  false,
+692 |   };
+693 |   notes.unshift(note);
+694 |   save();
+695 |   openNote(note.id);
+696 |   renderList();
+697 |   document.getElementById('noteTitle').focus();
+698 | }
+699 | 
+700 | /* === OPEN NOTE === */
+701 | function openNote(id) {
+702 |   activeId = id;
+703 |   const note = notes.find(n => n.id === id);
+704 |   if (!note) return;
+705 |   document.getElementById('emptyState').style.display  = 'none';
+706 |   const panel = document.getElementById('editorPanel');
+707 |   panel.style.display = 'flex';
+708 |   document.getElementById('noteTitle').value   = note.title;
+709 |   document.getElementById('noteEditor').value  = note.content;
+710 |   document.getElementById('metaTag').value     = note.tag || 'Ideas';
+711 |   document.getElementById('metaDate').textContent =
+712 |     note.date + ' · ' + note.time;
+713 |   document.getElementById('pinBtn').style.opacity = note.pinned ? '1' : '0.4';
+714 |   updateWordCount();
+715 |   renderList();
+716 | }
+717 | 
+718 | /* === SAVE NOTE === */
+719 | function saveCurrentNote() {
+720 |   if (!activeId) return;
+721 |   clearTimeout(saveTimer);
+722 |   saveTimer = setTimeout(() => {
+723 |     const note = notes.find(n => n.id === activeId);
+724 |     if (!note) return;
+725 |     note.title   = document.getElementById('noteTitle').value;
+726 |     note.content = document.getElementById('noteEditor').value;
+727 |     note.tag     = document.getElementById('metaTag').value;
+728 |     note.time    = getTime();
+729 |     save();
+730 |     renderList();
+731 |   }, 400);
+732 | }
+733 | 
+734 | /* === DELETE NOTE === */
+735 | function deleteNote() {
+736 |   if (!activeId) return;
+737 |   notes = notes.filter(n => n.id !== activeId);
+738 |   activeId = null;
+739 |   save();
+740 |   document.getElementById('editorPanel').style.display = 'none';
+741 |   document.getElementById('emptyState').style.display  = 'flex';
+742 |   renderList();
+743 |   showToast('✕ Note deleted');
+744 | }
+745 | 
+746 | /* === PIN NOTE === */
+747 | function pinNote() {
+748 |   if (!activeId) return;
+749 |   const note = notes.find(n => n.id === activeId);
+750 |   if (!note) return;
+751 |   note.pinned = !note.pinned;
+752 |   document.getElementById('pinBtn').style.opacity = note.pinned ? '1' : '0.4';
+753 |   save();
+754 |   renderList();
+755 |   showToast(note.pinned ? '📌 Note pinned' : '📌 Note unpinned');
+756 | }
+757 | 
+758 | /* === COPY NOTE === */
+759 | function copyNote() {
+760 |   const note = notes.find(n => n.id === activeId);
+761 |   if (!note) return;
+762 |   const text = note.title + '\n\n' + note.content;
+763 |   navigator.clipboard.writeText(text).then(() => {
+764 |     showToast('✓ Copied to clipboard');
+765 |   });
+766 | }
+767 | 
+768 | /* === WORD COUNT === */
+769 | function updateWordCount() {
+770 |   const val = document.getElementById('noteEditor').value.trim();
+771 |   const words = val ? val.split(/\s+/).length : 0;
+772 |   document.getElementById('wordCount').textContent = words + ' words';
+773 | }
+774 | 
+775 | /* === FORMAT === */
+776 | function fmt(cmd) {
+777 |   document.getElementById('noteEditor').focus();
+778 |   showToast('✦ ' + cmd + ' applied');
+779 | }
+780 | 
+781 | function fmtBlock(type) {
+782 |   const editor = document.getElementById('noteEditor');
+783 |   const start  = editor.selectionStart;
+784 |   const end    = editor.selectionEnd;
+785 |   const sel    = editor.value.substring(start, end);
+786 |   const prefix = {
+787 |     h1:'# ', h2:'## ', ul:'• ', ol:'1. ',
+788 |     quote:'> ', code:'`'
+789 |   }[type] || '';
+790 |   const result = prefix + (sel || 'text');
+791 |   editor.value = editor.value.substring(0,start) +
+792 |                  result +
+793 |                  editor.value.substring(end);
+794 |   saveCurrentNote();
+795 |   updateWordCount();
+796 | }
+797 | 
+798 | function clearFormat() {
+799 |   showToast('✕ Format cleared');
+800 | }
+801 | 
+802 | /* === RENDER LIST === */
+803 | function renderList() {
+804 |   const search  = document.getElementById('searchField').value.toLowerCase();
+805 |   const list    = document.getElementById('noteList');
+806 |   let filtered  = notes.filter(n => {
+807 |     const matchTag  = activeTag === 'All' || n.tag === activeTag;
+808 |     const matchText = n.title.toLowerCase().includes(search) ||
+809 |                       n.content.toLowerCase().includes(search);
+810 |     return matchTag && matchText;
+811 |   });
+812 |   const pinned   = filtered.filter(n => n.pinned);
+813 |   const unpinned = filtered.filter(n => !n.pinned);
+814 |   filtered = [...pinned, ...unpinned];
+815 |   list.innerHTML = '';
+816 |   filtered.forEach((n, i) => {
+817 |     const tc = TAG_COLORS[n.tag] || TAG_COLORS.Ideas;
+818 |     const item = document.createElement('div');
+819 |     item.className = 'note-item' + (n.id === activeId ? ' active' : '');
+820 |     item.style.animationDelay = (i * 0.04) + 's';
+821 |     item.onclick = () => openNote(n.id);
+822 |     item.innerHTML = `
+823 |       <div class="note-item-title">
+824 |         ${n.pinned ? '📌 ' : ''}${n.title || 'Untitled'}
+825 |       </div>
+826 |       <div class="note-item-preview">
+827 |         ${n.content || 'No content...'}
+828 |       </div>
+829 |       <div class="note-item-meta">
+830 |         <span class="note-item-date">${n.date}</span>
+831 |         <span class="note-tag" style="
+832 |           background:${tc.bg};
+833 |           border:1px solid ${tc.border};
+834 |           color:${tc.color}">
+835 |           ${n.tag}
+836 |         </span>
+837 |       </div>`;
+838 |     list.appendChild(item);
+839 |   });
+840 |   updateStats();
+841 | }
+842 | 
+843 | /* === TAG FILTER === */
+844 | function setTag(el) {
+845 |   document.querySelectorAll('.tag-chip')
+846 |     .forEach(t => t.classList.remove('active'));
+847 |   el.classList.add('active');
+848 |   activeTag = el.dataset.tag;
+849 |   renderList();
+850 | }
+851 | 
+852 | /* === STATS === */
+853 | function updateStats() {
+854 |   const today  = notes.filter(n => isToday(n.date)).length;
+855 |   const words  = notes.reduce((s,n) =>
+856 |     s + (n.content ? n.content.trim().split(/\s+/).length : 0), 0);
+857 |   document.getElementById('statTotal').textContent = notes.length;
+858 |   document.getElementById('statWords').textContent = words;
+859 |   document.getElementById('statToday').textContent = today;
+860 | }
+861 | 
+862 | /* === KEYBOARD SHORTCUT === */
+863 | document.addEventListener('keydown', e => {
+864 |   if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+865 |     e.preventDefault();
+866 |     newNote();
+867 |   }
+868 |   if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+869 |     e.preventDefault();
+870 |     saveCurrentNote();
+871 |     showToast('✓ Note saved');
+872 |   }
+873 | });
+874 | 
+875 | /* === INIT === */
+876 | if (notes.length > 0) {
+877 |   renderList();
+878 |   openNote(notes[0].id);
+879 | } else {
+880 |   renderList();
+881 |   document.getElementById('emptyState').style.display = 'flex';
+882 | }
+883 | 
+884 | </script>
+885 | </body>
+886 | </html>
