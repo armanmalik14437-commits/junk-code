@@ -1,0 +1,624 @@
+1   | <!DOCTYPE html>
+2   | <html lang="en">
+3   | <head>
+4   | <meta charset="UTF-8"/>
+5   | <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+6   | <title>NEXUS TEST</title>
+7   | <style>
+8   | :root {
+9   |   --bg: #07070f;
+10  |   --surface: #0f0f1e;
+11  |   --border: rgba(255,255,255,0.07);
+12  |   --cyan: #00f5ff;
+13  |   --violet: #bf00ff;
+14  |   --pink: #ff0080;
+15  |   --green: #00ff88;
+16  |   --gold: #ffd700;
+17  |   --text: #e8e8f8;
+18  |   --dim: rgba(232,232,248,0.4);
+19  |   --ghost: rgba(232,232,248,0.15);
+20  | }
+21  | *, *::before, *::after {
+22  |   margin: 0; padding: 0;
+23  |   box-sizing: border-box;
+24  | }
+25  | body {
+26  |   background: var(--bg);
+27  |   color: var(--text);
+28  |   font-family: 'Segoe UI', sans-serif;
+29  |   min-height: 100vh;
+30  |   display: flex;
+31  |   flex-direction: column;
+32  |   align-items: center;
+33  |   padding: 40px 20px;
+34  | }
+35  | ::-webkit-scrollbar { width: 4px; }
+36  | ::-webkit-scrollbar-thumb {
+37  |   background: rgba(0,245,255,0.2);
+38  |   border-radius: 2px;
+39  | }
+40  | ::selection {
+41  |   background: rgba(0,245,255,0.2);
+42  |   color: var(--cyan);
+43  | }
+44  | h1 {
+45  |   font-size: 1.6rem;
+46  |   letter-spacing: 0.2em;
+47  |   background: linear-gradient(90deg, var(--cyan), var(--violet));
+48  |   -webkit-background-clip: text;
+49  |   -webkit-text-fill-color: transparent;
+50  |   margin-bottom: 8px;
+51  | }
+52  | .subtitle {
+53  |   font-size: 0.75rem;
+54  |   color: var(--ghost);
+55  |   letter-spacing: 0.15em;
+56  |   margin-bottom: 36px;
+57  | }
+58  | .card {
+59  |   width: 100%;
+60  |   max-width: 600px;
+61  |   background: var(--surface);
+62  |   border: 1px solid var(--border);
+63  |   border-radius: 16px;
+64  |   padding: 24px;
+65  |   margin-bottom: 20px;
+66  | }
+67  | .card-title {
+68  |   font-size: 0.6rem;
+69  |   letter-spacing: 0.25em;
+70  |   color: var(--ghost);
+71  |   text-transform: uppercase;
+72  |   margin-bottom: 14px;
+73  | }
+74  | .btn-row {
+75  |   display: flex;
+76  |   gap: 8px;
+77  |   flex-wrap: wrap;
+78  |   margin-bottom: 12px;
+79  | }
+80  | .btn {
+81  |   padding: 8px 18px;
+82  |   border-radius: 8px;
+83  |   border: 1px solid rgba(0,245,255,0.3);
+84  |   background: rgba(0,245,255,0.08);
+85  |   color: var(--cyan);
+86  |   font-size: 0.75rem;
+87  |   letter-spacing: 0.1em;
+88  |   cursor: pointer;
+89  |   transition: all 0.2s;
+90  | }
+91  | .btn:hover {
+92  |   background: rgba(0,245,255,0.18);
+93  |   box-shadow: 0 0 14px rgba(0,245,255,0.2);
+94  |   transform: translateY(-1px);
+95  | }
+96  | .btn.violet {
+97  |   border-color: rgba(191,0,255,0.3);
+98  |   background: rgba(191,0,255,0.08);
+99  |   color: var(--violet);
+100 | }
+101 | .btn.violet:hover {
+102 | background: rgba(191,0,255,0.18);
+103 | box-shadow: 0 0 14px rgba(191,0,255,0.2);
+104 | }
+105 | .btn.pink {
+106 |   border-color: rgba(255,0,128,0.3);
+107 |   background: rgba(255,0,128,0.08);
+108 |   color: var(--pink);
+109 | }
+110 | .btn.pink:hover {
+111 |   background: rgba(255,0,128,0.18);
+112 |   box-shadow: 0 0 14px rgba(255,0,128,0.2);
+113 | }
+114 | .btn.green {
+115 |   border-color: rgba(0,255,136,0.3);
+116 |   background: rgba(0,255,136,0.08);
+117 |   color: var(--green);
+118 | }
+119 | .btn.green:hover {
+120 |   background: rgba(0,255,136,0.18);
+121 |   box-shadow: 0 0 14px rgba(0,255,136,0.2);
+122 | }
+123 | .output {
+124 |   background: #080810;
+125 |   border: 1px solid var(--border);
+126 |   border-radius: 10px;
+127 |   padding: 14px;
+128 |   font-size: 0.82rem;
+129 |   color: var(--dim);
+130 |   min-height: 48px;
+131 |   line-height: 1.7;
+132 |   transition: all 0.3s;
+133 | }
+134 | .output.glow-cyan {
+135 |   border-color: rgba(0,245,255,0.3);
+136 |   color: var(--cyan);
+137 | }
+138 | .output.glow-violet {
+139 |   border-color: rgba(191,0,255,0.3);
+140 |   color: var(--violet);
+141 | }
+142 | .output.glow-pink {
+143 |   border-color: rgba(255,0,128,0.3);
+144 |   color: var(--pink);
+145 | }
+146 | .output.glow-green {
+147 |   border-color: rgba(0,255,136,0.3);
+148 |   color: var(--green);
+149 | }
+150 | input[type="text"], textarea {
+151 |   width: 100%;
+152 |   background: #080810;
+153 |   border: 1px solid var(--border);
+154 |   border-radius: 10px;
+155 |   padding: 10px 14px;
+156 |   color: var(--text);
+157 |   font-family: inherit;
+158 |   font-size: 0.85rem;
+159 |   outline: none;
+160 |   transition: all 0.2s;
+161 |   margin-bottom: 10px;
+162 | }
+163 | input[type="text"]:focus, textarea:focus {
+164 |   border-color: rgba(0,245,255,0.3);
+165 |   box-shadow: 0 0 10px rgba(0,245,255,0.06);
+166 | }
+167 | textarea { min-height: 80px; resize: vertical; }
+168 | .counter-display {
+169 |   font-size: 3rem;
+170 |   font-weight: 700;
+171 |   text-align: center;
+172 |   color: var(--cyan);
+173 |   letter-spacing: 0.1em;
+174 |   padding: 16px 0;
+175 |   transition: all 0.2s;
+176 | }
+177 | .counter-display.neg { color: var(--pink); }
+178 | .counter-display.zero { color: var(--ghost); }
+179 | .tag-row {
+180 |   display: flex;
+181 |   flex-wrap: wrap;
+182 |   gap: 8px;
+183 |   margin-top: 10px;
+184 | }
+185 | .tag {
+186 |   font-size: 0.6rem;
+187 |   letter-spacing: 0.1em;
+188 |   padding: 4px 12px;
+189 |   border-radius: 20px;
+190 |   border: 1px solid var(--border);
+191 |   background: rgba(255,255,255,0.03);
+192 |   color: var(--dim);
+193 |   cursor: pointer;
+194 |   transition: all 0.2s;
+195 |   text-transform: uppercase;
+196 | }
+197 | .tag.active {
+198 |   border-color: rgba(0,245,255,0.4);
+199 |   color: var(--cyan);
+200 |   background: rgba(0,245,255,0.08);
+201 | }
+202 | .progress-wrap {
+203 |   width: 100%;
+204 |   height: 6px;
+205 |   background: rgba(255,255,255,0.05);
+206 |   border-radius: 3px;
+207 |   margin: 12px 0;
+208 |   overflow: hidden;
+209 | }
+210 | .progress-bar {
+211 |   height: 100%;
+212 |   border-radius: 3px;
+213 |   background: linear-gradient(90deg, var(--cyan), var(--violet));
+214 |   transition: width 0.4s ease;
+215 |   width: 0%;
+216 | }
+217 | .stat-grid {
+218 |   display: grid;
+219 |   grid-template-columns: repeat(3, 1fr);
+220 |   gap: 12px;
+221 |   margin-top: 10px;
+222 | }
+223 | .stat-box {
+224 |   background: #080810;
+225 |   border: 1px solid var(--border);
+226 |   border-radius: 10px;
+227 |   padding: 12px;
+228 |   text-align: center;
+229 | }
+230 | .stat-val {
+231 |   font-size: 1.4rem;
+232 |   font-weight: 700;
+233 |   color: var(--cyan);
+234 | }
+235 | .stat-lbl {
+236 |   font-size: 0.5rem;
+237 |   letter-spacing: 0.15em;
+238 |   color: var(--ghost);
+239 |   text-transform: uppercase;
+240 |   margin-top: 4px;
+241 | }
+242 | .toast {
+243 |   position: fixed;
+244 |   bottom: 24px; left: 50%;
+245 |   transform: translateX(-50%) translateY(60px);
+246 |   background: rgba(7,7,15,0.95);
+247 |   border: 1px solid rgba(0,245,255,0.3);
+248 |   border-radius: 12px;
+249 |   padding: 10px 22px;
+250 |   font-size: 0.65rem;
+251 |   letter-spacing: 0.12em;
+252 |   color: var(--cyan);
+253 |   backdrop-filter: blur(20px);
+254 |   transition: transform 0.3s, opacity 0.3s;
+255 |   opacity: 0;
+256 |   z-index: 999;
+257 | }
+258 | .toast.show {
+259 |   transform: translateX(-50%) translateY(0);
+260 |   opacity: 1;
+261 | }
+262 | @keyframes pulse {
+263 |   0%, 100% { opacity: 1; }
+264 |   50%       { opacity: 0.4; }
+265 | }
+266 | .pulse { animation: pulse 1.5s ease infinite; }
+267 | @keyframes fadeIn {
+268 |   from { opacity:0; transform:translateY(8px); }
+269 |   to   { opacity:1; transform:translateY(0); }
+270 | }
+271 | .fade-in { animation: fadeIn 0.4s ease both; }
+272 | .divider {
+273 |   width: 100%;
+274 |   max-width: 600px;
+275 |   height: 1px;
+276 |   background: var(--border);
+277 |   margin: 8px 0 20px;
+278 | }
+279 | .color-dot {
+280 |   width: 10px; height: 10px;
+281 |   border-radius: 50%;
+282 |   display: inline-block;
+283 |   margin-right: 6px;
+284 | }
+285 | .list-item {
+286 |   padding: 10px 12px;
+287 |   border-radius: 8px;
+288 |   border: 1px solid transparent;
+289 |   display: flex;
+290 |   align-items: center;
+291 |   gap: 10px;
+292 |   font-size: 0.82rem;
+293 |   color: var(--dim);
+294 |   cursor: pointer;
+295 |   transition: all 0.2s;
+296 | }
+297 | .list-item:hover {
+298 |   background: rgba(255,255,255,0.03);
+299 |   border-color: var(--border);
+300 |   color: var(--text);
+301 | }| </style>
+302 | </head>
+303 | <body>
+304 | 
+305 | <h1>NEXUS TEST</h1>
+306 | <p class="subtitle">CHUNK TESTING · 3 PARTS · RUN KARKE DEKHO</p>
+307 | 
+308 | <!-- CARD 1: COUNTER -->
+309 | <div class="card fade-in">
+310 |   <div class="card-title">⬡ Counter Test</div>
+311 |   <div class="counter-display zero" id="counter">0</div>
+312 |   <div class="btn-row">
+313 |     <button class="btn green" onclick="changeCount(1)">+ Add</button>
+314 |     <button class="btn pink"  onclick="changeCount(-1)">− Sub</button>
+315 |     <button class="btn violet" onclick="resetCount()">↺ Reset</button>
+316 |   </div>
+317 |   <div class="output" id="counterOut">Counter ready...</div>
+318 | </div>
+319 | 
+320 | <!-- CARD 2: INPUT TEST -->
+321 | <div class="card fade-in">
+322 |   <div class="card-title">⬡ Input Test</div>
+323 |   <input type="text" id="textIn" placeholder="Kuch bhi type karo..."/>
+324 |   <div class="btn-row">
+325 |     <button class="btn" onclick="processText()">▶ Run</button>
+326 |     <button class="btn violet" onclick="reverseText()">⇄ Reverse</button>
+327 |     <button class="btn pink" onclick="clearText()">✕ Clear</button>
+328 |   </div>
+329 |   <div class="output" id="textOut">Output yahan aayega...</div>
+330 | </div>
+331 | 
+332 | <!-- CARD 3: TAG SELECTOR -->
+333 | <div class="card fade-in">
+334 |   <div class="card-title">⬡ Tag Selector Test</div>
+335 |   <div class="tag-row" id="tagRow">
+336 |     <div class="tag" onclick="selectTag(this,'cyan')">Cyan</div>
+337 |     <div class="tag" onclick="selectTag(this,'violet')">Violet</div>
+338 |     <div class="tag" onclick="selectTag(this,'pink')">Pink</div>
+339 |     <div class="tag" onclick="selectTag(this,'green')">Green</div>
+340 |     <div class="tag" onclick="selectTag(this,'gold')">Gold</div>
+341 |   </div>
+342 |   <div class="output" id="tagOut" style="margin-top:12px">
+343 |     Koi tag select nahi hua...
+344 |   </div>
+345 | </div>
+346 | 
+347 | <!-- CARD 4: PROGRESS BAR -->
+348 | <div class="card fade-in">
+349 |   <div class="card-title">⬡ Progress Bar Test</div>
+350 |   <div class="progress-wrap">
+351 |     <div class="progress-bar" id="progressBar"></div>
+352 |   </div>
+353 |   <div class="btn-row">
+354 |     <button class="btn" onclick="setProgress(25)">25%</button>
+355 |     <button class="btn violet" onclick="setProgress(50)">50%</button>
+356 |     <button class="btn green" onclick="setProgress(75)">75%</button>
+357 |     <button class="btn pink" onclick="setProgress(100)">100%</button>
+358 |     <button class="btn" onclick="setProgress(0)">Reset</button>
+359 |   </div>
+360 |   <div class="output" id="progressOut">Progress: 0%</div>
+361 | </div>
+362 | 
+363 | <!-- CARD 5: STATS -->
+364 | <div class="card fade-in">
+365 |   <div class="card-title">⬡ Stats Test</div>
+366 |   <div class="stat-grid">
+367 |     <div class="stat-box">
+368 |       <div class="stat-val" id="s1">0</div>
+369 |       <div class="stat-lbl">Clicks</div>
+370 |     </div>
+371 |     <div class="stat-box">
+372 |       <div class="stat-val" id="s2">0</div>
+373 |       <div class="stat-lbl">Keys</div>
+374 |     </div>
+375 |     <div class="stat-box">
+376 |       <div class="stat-val" id="s3">0</div>
+377 |       <div class="stat-lbl">Actions</div>
+378 |     </div>
+379 |   </div>
+380 | </div>
+381 | 
+382 | <!-- CARD 6: TEXTAREA + WORD COUNT -->
+383 | <div class="card fade-in">
+384 |   <div class="card-title">⬡ Textarea + Word Count Test</div>
+385 |   <textarea id="noteArea"
+386 |     placeholder="Yahan likho... word count chalega"
+387 |     oninput="countWords()"></textarea>
+388 |   <div class="output" id="wordOut">Words: 0 | Chars: 0</div>
+389 | </div>
+390 | 
+391 | <!-- CARD 7: COLOR SWITCHER -->
+392 | <div class="card fade-in">
+393 |   <div class="card-title">⬡ Theme Color Test</div>
+394 |   <div class="btn-row">
+395 |     <button class="btn"        onclick="setTheme('cyan')">Cyan</button>
+396 |     <button class="btn violet" onclick="setTheme('violet')">Violet</button>
+397 |     <button class="btn pink"   onclick="setTheme('pink')">Pink</button>
+398 |     <button class="btn green"  onclick="setTheme('green')">Green</button>
+399 |   </div>
+400 |   <div class="output" id="themeOut">Theme: default cyan</div>
+401 | </div>
+402 | 
+403 | <!-- CARD 8: LIST BUILDER -->
+404 | <div class="card fade-in">
+405 |   <div class="card-title">⬡ List Builder Test</div>
+406 |   <input type="text" id="listIn" placeholder="Item add karo..."/>
+407 |   <div class="btn-row">
+408 |     <button class="btn" onclick="addItem()">+ Add</button>
+409 |     <button class="btn pink" onclick="clearList()">✕ Clear All</button>
+410 |   </div>
+411 |   <div id="listWrap" style="margin-top:8px"></div>
+412 |   <div class="output" id="listOut" style="margin-top:10px">
+413 |     List empty hai...
+414 |   </div>
+415 | </div>
+416 | 
+417 | <!-- TOAST -->
+418 | <div class="toast" id="toast"></div>
+419 | 
+420 | <script>
+421 | 
+422 | /* === GLOBALS === */
+423 | let countVal  = 0;
+424 | let clicks    = 0;
+425 | let keys      = 0;
+426 | let actions   = 0;
+427 | let listItems = [];
+428 | 
+429 | /* === TOAST === */
+430 | function toast(msg, color) {
+431 |   const t = document.getElementById('toast');
+432 |   t.textContent = msg;
+433 |   t.style.borderColor = color || 'rgba(0,245,255,0.3)';
+434 |   t.style.color = color ? color : 'var(--cyan)';
+435 |   t.classList.add('show');
+436 |   clearTimeout(window._t);
+437 |   window._t = setTimeout(() => t.classList.remove('show'), 2000);
+438 | }
+439 | 
+440 | /* === TRACK === */
+441 | function track(type) {
+442 |   if (type === 'click') {
+443 |     clicks++;
+444 |     document.getElementById('s1').textContent = clicks;
+445 |   } else if (type === 'key') {
+446 |     keys++;
+447 |     document.getElementById('s2').textContent = keys;
+448 |   }
+449 |   actions++;
+450 |   document.getElementById('s3').textContent = actions;
+451 | }
+452 | 
+453 | /* === COUNTER === */
+454 | function changeCount(n) {
+455 |   countVal += n;
+456 |   const el = document.getElementById('counter');
+457 |   el.textContent = countVal;
+458 |   el.className = 'counter-display';
+459 |   if (countVal > 0) el.classList.add('');
+460 |   if (countVal < 0) el.classList.add('neg');
+461 |   if (countVal === 0) el.classList.add('zero');
+462 |   document.getElementById('counterOut').textContent =
+463 |     'Value: ' + countVal + (countVal > 9 ? ' 🔥' : '');
+462 |   document.getElementById('counterOut').className =
+463 |     'output' + (countVal < 0 ? ' glow-pink' : ' glow-cyan');
+464 |   track('click');
+465 |   toast(n > 0 ? '+ Added' : '− Subtracted');
+466 | }
+467 | 
+468 | function resetCount() {
+469 |   countVal = 0;
+470 |   document.getElementById('counter').textContent = '0';
+471 |   document.getElementById('counter').className = 'counter-display zero';
+472 |   document.getElementById('counterOut').textContent = 'Counter reset.';
+473 |   document.getElementById('counterOut').className = 'output';
+474 |   track('click');
+475 |   toast('↺ Reset');
+476 | }
+477 | 
+478 | /* === TEXT === */
+479 | function processText() {
+480 |   const val = document.getElementById('textIn').value.trim();
+481 |   if (!val) { toast('Kuch likho pehle!'); return; }
+482 |   const out = document.getElementById('textOut');
+483 |   out.textContent = '▶ ' + val.toUpperCase() +
+484 |     ' [' + val.length + ' chars]';
+485 |   out.className = 'output glow-cyan';
+486 |   track('click');
+487 |   toast('✓ Processed');
+488 | }
+489 | 
+490 | function reverseText() {
+491 |   const val = document.getElementById('textIn').value.trim();
+492 |   if (!val) { toast('Kuch likho pehle!'); return; }
+493 |   const out = document.getElementById('textOut');
+494 |   out.textContent = '⇄ ' + val.split('').reverse().join('');
+495 |   out.className = 'output glow-violet';
+496 |   track('click');
+497 |   toast('⇄ Reversed');
+498 | }
+499 | 
+500 | function clearText() {
+501 |   document.getElementById('textIn').value = '';
+502 |   document.getElementById('textOut').textContent = 'Cleared.';
+503 |   document.getElementById('textOut').className = 'output';
+504 |   track('click');
+505 |   toast('✕ Cleared');
+506 | }
+507 | 
+508 | /* === TAGS === */
+509 | function selectTag(el, color) {
+510 |   document.querySelectorAll('.tag')
+510 |     .forEach(t => t.classList.remove('active'));
+511 |   el.classList.add('active');
+512 |   const out = document.getElementById('tagOut');
+513 |   out.textContent = '✦ Selected: ' + el.textContent;
+514 |   out.className = 'output glow-' + color;
+515 |   track('click');
+516 |   toast('✦ ' + el.textContent + ' selected');
+517 | }
+518 | 
+519 | /* === PROGRESS === */
+520 | function setProgress(val) {
+521 |   document.getElementById('progressBar').style.width = val + '%';
+522 |   document.getElementById('progressOut').textContent =
+523 |     'Progress: ' + val + '%';
+524 |   document.getElementById('progressOut').className =
+525 |     'output' + (val === 100 ? ' glow-green' : ' glow-cyan');
+526 |   track('click');
+527 |   toast(val === 100 ? '✓ Complete!' : val + '% set');
+528 | }
+529 | 
+530 | /* === WORD COUNT === */
+531 | function countWords() {
+532 |   const val = document.getElementById('noteArea').value;
+533 |   const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+534 |   const chars = val.length;
+535 |   document.getElementById('wordOut').textContent =
+536 |     'Words: ' + words + ' | Chars: ' + chars;
+537 |   track('key');
+538 | }
+539 | 
+540 | /* === THEME === */
+541 | function setTheme(c) {
+542 |   const colors = {
+543 |     cyan:   '#00f5ff',
+544 |     violet: '#bf00ff',
+545 |     pink:   '#ff0080',
+546 |     green:  '#00ff88',
+547 |   };
+548 |   document.documentElement.style.setProperty('--cyan', colors[c]);
+549 |   document.getElementById('themeOut').textContent =
+550 |     'Theme: ' + c + ' active';
+551 |   document.getElementById('themeOut').className =
+552 |     'output glow-' + c;
+553 |   track('click');
+554 |   toast('🎨 Theme: ' + c);
+555 | }
+556 | 
+557 | /* === LIST === */
+558 | function addItem() {
+559 |   const val = document.getElementById('listIn').value.trim();
+560 |   if (!val) { toast('Kuch likho!'); return; }
+561 |   listItems.push(val);
+562 |   document.getElementById('listIn').value = '';
+563 |   renderList();
+564 |   track('click');
+565 |   toast('+ ' + val + ' added');
+566 | }
+567 | 
+568 | function removeItem(i) {
+569 |   listItems.splice(i, 1);
+570 |   renderList();
+571 |   track('click');
+572 |   toast('✕ Item removed');
+573 | }
+574 | 
+575 | function clearList() {
+576 |   listItems = [];
+577 |   renderList();
+578 |   track('click');
+579 |   toast('✕ List cleared');
+580 | }
+581 | 
+582 | function renderList() {
+583 |   const wrap = document.getElementById('listWrap');
+584 |   const out  = document.getElementById('listOut');
+585 |   wrap.innerHTML = '';
+586 |   if (listItems.length === 0) {
+587 |     out.textContent = 'List empty hai...';
+588 |     out.className = 'output';
+589 |     return;
+590 |   }
+591 |   listItems.forEach((item, i) => {
+592 |     const div = document.createElement('div');
+593 |     div.className = 'list-item';
+594 |     div.innerHTML = `
+595 |       <span class="color-dot"
+596 |         style="background:var(--cyan)"></span>
+597 |       <span style="flex:1">${item}</span>
+598 |       <span style="color:var(--pink);cursor:pointer;font-size:0.8rem"
+599 |         onclick="removeItem(${i})">✕</span>`;
+600 |     wrap.appendChild(div);
+601 |   }); |   out.textContent = listItems.length + ' items';
+602 |   out.className = 'output glow-cyan';
+603 | }
+604 | 
+605 | /* === KEYBOARD === */
+606 | document.addEventListener('keydown', e => {
+607 |   track('key');
+608 | });
+609 | 
+610 | document.addEventListener('click', e => {
+611 |   track('click');
+612 | });
+613 | 
+614 | /* === INIT === */
+615 | window.addEventListener('load', () => {
+616 |   toast('✓ NEXUS TEST loaded');
+617 | });
+618 | 
+619 | </script>
+620 | </body>
+621 | </html>
