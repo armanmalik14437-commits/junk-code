@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arman's Multiverse - Spider Clock Hub</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --neon-orange: #ff8c00;
+            --neon-glow: rgba(255, 140, 0, 0.4);
+            --gear-color: rgba(255, 140, 0, 0.15);
+            --text-main: #ffffff;
+            --terminal-bg: #111111;
+            --terminal-header: #222222;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: radial-gradient(circle at center, #1a0f00 0%, var(--bg-dark) 70%);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.05);
+        }
+
+        .gears-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .gear {
+            position: absolute;
+            fill: none;
+            stroke: var(--gear-color);
+            stroke-width: 2;
+        }
+
+        .gear-1 { width: 150px; animation: spinRight 15s linear infinite; top: 20%; left: 25%; }
+        .gear-2 { width: 120px; animation: spinLeft 12s linear infinite; bottom: 20%; right: 30%; }
+        .gear-3 { width: 200px; animation: spinRight 25s linear infinite; opacity: 0.5; }
+
+        @keyframes spinRight { 100% { transform: rotate(360deg); } }
+        @keyframes spinLeft { 100% { transform: rotate(-360deg); } }
+
+        .clock-face {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--gear-color);
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .num1 { transform: rotate(30deg); } .num1 div { transform: rotate(-30deg); }
+        .num2 { transform: rotate(60deg); } .num2 div { transform: rotate(-60deg); }
+        .num3 { transform: rotate(90deg); } .num3 div { transform: rotate(-90deg); }
+        .num4 { transform: rotate(120deg); } .num4 div { transform: rotate(-120deg); }
+        .num5 { transform: rotate(150deg); } .num5 div { transform: rotate(-150deg); }
+        .num6 { transform: rotate(180deg); } .num6 div { transform: rotate(-180deg); }
+        .num7 { transform: rotate(210deg); } .num7 div { transform: rotate(-210deg); }
+        .num8 { transform: rotate(240deg); } .num8 div { transform: rotate(-240deg); }
+        .num9 { transform: rotate(270deg); } .num9 div { transform: rotate(-270deg); }
+        .num10 { transform: rotate(300deg); } .num10 div { transform: rotate(-300deg); }
+        .num11 { transform: rotate(330deg); } .num11 div { transform: rotate(-330deg); }
+
+        .spider-center {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 15px var(--neon-orange));
+        }
+
+        .spider-svg {
+            width: 60px;
+            fill: var(--neon-orange);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); filter: drop-shadow(0 0 5px var(--neon-orange)); }
+            100% { transform: scale(1.05); filter: drop-shadow(0 0 25px var(--neon-orange)); }
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            background-color: var(--neon-orange);
+            border-radius: 10px;
+            z-index: 4;
+            box-shadow: 0 0 10px var(--neon-orange);
+        }
+
+        .hour-hand { width: 4px; height: 70px; margin-left: -2px; }
+        .minute-hand { width: 3px; height: 100px; margin-left: -1.5px; }
+        .second-hand { width: 1px; height: 120px; margin-left: -0.5px; background-color: #ff3300; box-shadow: 0 0 10px #ff3300; }
+
+        .terminal-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--terminal-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .terminal-header {
+            background: var(--terminal-header);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mac-dots { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .terminal-body {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #a9b7c6;
+            overflow-y: auto;
+            max-height: 250px;
+        }
+
+        .line-num { color: #606366; margin-right: 15px; user-select: none; }
+        .tag { color: #cc7832; }
+        .prop { color: #9876aa; }
+        .val { color: #6a8759; }
+        .keyword { color: #ff8c00; font-weight: bold; }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: var(--neon-orange);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        @media (max-width: 600px) {
+            .clock-container { height: 300px; border-radius: 0; border-left: none; border-right: none;}
+            .clock-face { width: 220px; height: 220px; }
+            .hour-hand { height: 50px; }
+            .minute-hand { height: 80px; }
+            .second-hand { height: 100px; }
+            .terminal-container { border-radius: 0; border-left: none; border-right: none;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clock-container">
+        <div class="gears-bg">
+            <svg class="gear gear-1" viewBox="0 0 100 100">
+                <path d="M50 15 L55 25 A30 30 0 0 1 65 29 L75 22 L82 29 L75 39 A30 30 0 0 1 79 50 L90 55 L90 65 L79 68 A30 30 0 0 1 75 79 L82 89 L75 96 L65 89 A30 30 0 0 1 55 93 L50 103 L40 103 L37 93 A30 30 0 0 1 27 89 L17 96 L10 89 L17 79 A30 30 0 0 1 13 68 L2 65 L2 55 L13 50 A30 30 0 0 1 17 39 L10 29 L17 22 L27 29 A30 30 0 0 1 37 25 L40 15 Z" />
+                <circle cx="50" cy="50" r="15" fill="none" stroke="var(--gear-color)" stroke-width="2"/>
+            </svg>
+            <svg class="gear gear-2" viewBox="0 0 100 100">
+                <path d="M50 15 L55 25 A30 30 0 0 1 65 29 L75 22 L82 29 L75 39 A30 30 0 0 1 79 50 L90 55 L90 65 L79 68 A30 30 0 0 1 75 79 L82 89 L75 96 L65 89 A30 30 0 0 1 55 93 L50 103 L40 103 L37 93 A30 30 0 0 1 27 89 L17 96 L10 89 L17 79 A30 30 0 0 1 13 68 L2 65 L2 55 L13 50 A30 30 0 0 1 17 39 L10 29 L17 22 L27 29 A30 30 0 0 1 37 25 L40 15 Z" />
+                <circle cx="50" cy="50" r="10" fill="none" stroke="var(--gear-color)" stroke-width="2"/>
+            </svg>
+            <svg class="gear gear-3" viewBox="0 0 100 100">
+                <path d="M50 10 L58 20 A35 35 0 0 1 70 25 L85 15 L95 25 L85 38 A35 35 0 0 1 90 50 L105 58 L105 70 L90 75 A35 35 0 0 1 85 88 L95 100 L85 110 L70 100 A35 35 0 0 1 58 105 L50 118 L38 118 L30 105 A35 35 0 0 1 18 100 L5 110 L-5 100 L5 88 A35 35 0 0 1 0 75 L-15 70 L-15 58 L0 50 A35 35 0 0 1 5 38 L-5 25 L5 15 L18 25 A35 35 0 0 1 30 20 L38 10 Z" />
+                <circle cx="50" cy="50" r="20" fill="none" stroke="var(--gear-color)" stroke-width="2"/>
+            </svg>
+        </div>
+
+        <div class="clock-face">
+            <div class="number num1"><div>1</div></div>
+            <div class="number num2"><div>2</div></div>
+            <div class="number num3"><div>3</div></div>
+            <div class="number num4"><div>4</div></div>
+            <div class="number num5"><div>5</div></div>
+            <div class="number num6"><div>6</div></div>
+            <div class="number num7"><div>7</div></div>
+            <div class="number num8"><div>8</div></div>
+            <div class="number num9"><div>9</div></div>
+            <div class="number num10"><div>10</div></div>
+            <div class="number num11"><div>11</div></div>
+            <div class="number num12"><div>12</div></div>
+
+            <div class="spider-center">
+                <svg class="spider-svg" viewBox="0 0 100 100">
+                    <ellipse cx="50" cy="55" rx="12" ry="18" />
+                    <circle cx="50" cy="35" r="8" />
+                    <path d="M 43 35 Q 20 20 10 30" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                    <path d="M 40 45 Q 15 40 5 55" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                    <path d="M 40 55 Q 15 65 15 80" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                    <path d="M 43 65 Q 30 85 35 95" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                    <path d="M 57 35 Q 80 20 90 30" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                    <path d="M 60 45 Q 85 40 95 55" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                    <path d="M 60 55 Q 85 65 85 80" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                    <path d="M 57 65 Q 70 85 65 95" stroke="var(--neon-orange)" stroke-width="3" fill="none"/>
+                </svg>
+            </div>
+
+            <div class="hand hour-hand" id="hr"></div>
+            <div class="hand minute-hand" id="min"></div>
+            <div class="hand second-hand" id="sec"></div>
+        </div>
+    </div>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="mac-dots">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+        </div>
+        <div class="terminal-body" id="codeEditor">
+            <span id="typedText"></span><span class="cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        const hr = document.getElementById('hr');
+        const min = document.getElementById('min');
+        const sec = document.getElementById('sec');
+
+        function updateClock() {
+            let day = new Date();
+            let hh = day.getHours() * 30;
+            let mm = day.getMinutes() * 6;
+            let ss = day.getSeconds() * 6;
+            hr.style.transform = `rotateZ(${hh + (mm/12)}deg)`;
+            min.style.transform = `rotateZ(${mm}deg)`;
+            sec.style.transform = `rotateZ(${ss}deg)`;
+            requestAnimationFrame(updateClock);
+        }
+        updateClock();
+
+        const terminalOutput = [
+            "<span class='line-num'>1</span> <span class='tag'>body</span> {<br>",
+            "<span class='line-num'>2</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>display</span>: <span class='val'>flex</span>;<br>",
+            "<span class='line-num'>3</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>justify-content</span>: <span class='val'>center</span>;<br>",
+            "<span class='line-num'>4</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>align-items</span>: <span class='val'>center</span>;<br>",
+            "<span class='line-num'>5</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>background-color</span>: <span class='val'>black</span>;<br>",
+            "<span class='line-num'>6</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>color</span>: <span class='val'>#FFF</span>;<br>",
+            "<span class='line-num'>7</span> }<br><br>",
+            "<span class='line-num'>8</span> <span class='line-num'>// System Boot Sequence Initiated...</span><br>",
+            "<span class='line-num'>9</span> <span class='keyword'>const</span> <span class='tag'>Multiverse</span> = <span class='keyword'>new</span> <span class='val'>System</span>();<br>",
+            "<span class='line-num'>10</span> <span class='tag'>Multiverse</span>.<span class='prop'>initialize</span>({<br>",
+            "<span class='line-num'>11</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>architect</span>: <span class='val'>'Arman'</span>,<br>",
+            "<span class='line-num'>12</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>status</span>: <span class='val'>'Online'</span>,<br>",
+            "<span class='line-num'>13</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class='prop'>aesthetic</span>: <span class='val'>'Cinematic Dark'</span><br>",
+            "<span class='line-num'>14</span> });<br><br>",
+            "<span class='line-num'>15</span> <span class='line-num'>// Establishing Neural Link... Done.</span><br>"
+        ];
+
+        const typedTextElement = document.getElementById('typedText');
+        const terminalBody = document.getElementById('codeEditor');
+        let lineIndex = 0, charIndex = 0, isTag = false, currentHTML = "";
+
+        function typeWriter() {
+            if (lineIndex < terminalOutput.length) {
+                let currentLine = terminalOutput[lineIndex];
+                if (charIndex < currentLine.length) {
+                    let char = currentLine.charAt(charIndex);
+                    if (char === '<') isTag = true;
+                    if (char === '>') isTag = false;
+                    currentHTML += char;
+                    typedTextElement.innerHTML = currentHTML;
+                    terminalBody.scrollTop = terminalBody.scrollHeight;
+                    let speed = isTag ? 0 : Math.random() * 30 + 10;
+                    charIndex++;
+                    setTimeout(typeWriter, speed);
+                } else {
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeWriter, 200);
+                }
+            } else {
+                setTimeout(() => {
+                    typedTextElement.innerHTML = "";
+                    currentHTML = "";
+                    lineIndex = 0;
+                    charIndex = 0;
+                    typeWriter();
+                }, 5000);
+            }
+        }
+        setTimeout(typeWriter, 1000);
+    </script>
+</body>
+</html>
