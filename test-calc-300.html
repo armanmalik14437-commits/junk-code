@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NEXUS Calculator</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #0a0a12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+  }
+
+  .calc-wrap {
+    background: #111120;
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    border-radius: 20px;
+    padding: 24px;
+    width: 320px;
+    box-shadow: 0 0 40px rgba(0, 245, 255, 0.08),
+                0 20px 60px rgba(0, 0, 0, 0.8);
+  }
+
+  .calc-title {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: rgba(0, 245, 255, 0.5);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .display {
+    background: #080810;
+    border: 1px solid rgba(0, 245, 255, 0.15);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
+  .display-expr {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 8px;
+    min-height: 16px;
+    word-break: break-all;
+    text-align: right;
+  }
+
+  .display-value {
+    font-size: 2rem;
+    color: #00f5ff;
+    text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+    word-break: break-all;
+    text-align: right;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .btn {
+    height: 60px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: #1a1a2e;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn:hover {
+    background: #252540;
+    border-color: rgba(0, 245, 255, 0.3);
+    box-shadow: 0 0 12px rgba(0, 245, 255, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: scale(0.95);
+    background: rgba(0, 245, 255, 0.1);
+  }
+
+  .btn-op {
+    background: rgba(191, 0, 255, 0.12);
+    border-color: rgba(191, 0, 255, 0.3);
+    color: #bf00ff;
+  }
+
+  .btn-op:hover {
+    background: rgba(191, 0, 255, 0.25);
+    box-shadow: 0 0 12px rgba(191, 0, 255, 0.2);
+  }
+
+  .btn-eq {
+    background: linear-gradient(135deg,
+      rgba(0, 245, 255, 0.25),
+      rgba(191, 0, 255, 0.25));
+    border-color: rgba(0, 245, 255, 0.5);
+    color: #00f5ff;
+    font-size: 1.3rem;
+  }
+
+  .btn-eq:hover {
+    background: linear-gradient(135deg,
+      rgba(0, 245, 255, 0.4),
+      rgba(191, 0, 255, 0.4));
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+  }
+
+  .btn-clear {
+    background: rgba(255, 0, 128, 0.12);
+    border-color: rgba(255, 0, 128, 0.3);
+    color: #ff0080;
+  }
+
+  .btn-clear:hover {
+    background: rgba(255, 0, 128, 0.25);
+    box-shadow: 0 0 12px rgba(255, 0, 128, 0.2);
+  }
+
+  .btn-zero {
+    grid-column: span 2;
+  }
+
+  .history {
+    margin-top: 16px;
+    background: #080810;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 10px 14px;
+    max-height: 80px;
+    overflow-y: auto;
+  }
+
+  .history-title {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .history-item {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .history-item span {
+    color: rgba(0, 245, 255, 0.6);
+  }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 245, 255, 0.2);
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="calc-wrap">
+  <div class="calc-title">⬡ NEXUS CALC v1.0 ⬡</div>
+
+  <div class="display">
+    <div class="display-expr" id="expr"></div>
+    <div class="display-value" id="display">0</div>
+  </div>
+
+  <div class="buttons">
+    <button class="btn btn-clear" onclick="clearAll()">AC</button>
+    <button class="btn btn-clear" onclick="deleteLast()">⌫</button>
+    <button class="btn btn-op" onclick="inputOp('%')">%</button>
+    <button class="btn btn-op" onclick="inputOp('/')">÷</button>
+
+    <button class="btn" onclick="inputNum('7')">7</button>
+    <button class="btn" onclick="inputNum('8')">8</button>
+    <button class="btn" onclick="inputNum('9')">9</button>
+    <button class="btn btn-op" onclick="inputOp('*')">×</button>
+
+    <button class="btn" onclick="inputNum('4')">4</button>
+    <button class="btn" onclick="inputNum('5')">5</button>
+    <button class="btn" onclick="inputNum('6')">6</button>
+    <button class="btn btn-op" onclick="inputOp('-')">−</button>
+
+    <button class="btn" onclick="inputNum('1')">1</button>
+    <button class="btn" onclick="inputNum('2')">2</button>
+    <button class="btn" onclick="inputNum('3')">3</button>
+    <button class="btn btn-op" onclick="inputOp('+')">+</button>
+
+    <button class="btn btn-zero" onclick="inputNum('0')">0</button>
+    <button class="btn" onclick="inputDot()">.</button>
+    <button class="btn btn-eq" onclick="calculate()">=</button>
+  </div>
+
+  <div class="history">
+    <div class="history-title">History</div>
+    <div id="historyList"></div>
+  </div>
+</div>
+
+<script>
+  let current = '0';
+  let expression = '';
+  let justCalculated = false;
+  let history = [];
+
+  const display = document.getElementById('display');
+  const exprEl = document.getElementById('expr');
+  const historyList = document.getElementById('historyList');
+
+  function updateDisplay() {
+    display.textContent = current;
+    exprEl.textContent = expression;
+  }
+
+  function inputNum(num) {
+    if (justCalculated) {
+      current = num;
+      expression = '';
+      justCalculated = false;
+    } else {
+      current = current === '0' ? num : current + num;
+    }
+    updateDisplay();
+  }
+
+  function inputDot() {
+    if (justCalculated) {
+      current = '0.';
+      justCalculated = false;
+    } else if (!current.includes('.')) {
+      current += '.';
+    }
+    updateDisplay();
+  }
+
+  function inputOp(op) {
+    justCalculated = false;
+    expression = current + ' ' + op;
+    current = '0';
+    updateDisplay();
+  }
+
+  function calculate() {
+    if (!expression) return;
+    const parts = expression.trim().split(' ');
+    const a = parseFloat(parts[0]);
+    const op = parts[1];
+    const b = parseFloat(current);
+    let result;
+
+    if (op === '+') result = a + b;
+    else if (op === '-') result = a - b;
+    else if (op === '*') result = a * b;
+    else if (op === '/') result = b !== 0 ? a / b : 'Error';
+    else if (op === '%') result = a % b;
+
+    const histEntry = `${parts[0]} ${op} ${current}`;
+    addHistory(histEntry, result);
+
+    current = String(parseFloat(result.toFixed(10)));
+    expression = histEntry + ' =';
+    justCalculated = true;
+    updateDisplay();
+  }
+
+  function clearAll() {
+    current = '0';
+    expression = '';
+    justCalculated = false;
+    updateDisplay();
+  }
+
+  function deleteLast() {
+    if (justCalculated) return;
+    current = current.length > 1 ? current.slice(0, -1) : '0';
+    updateDisplay();
+  }
+
+  function addHistory(expr, result) {
+    history.unshift({ expr, result });
+    if (history.length > 5) history.pop();
+    historyList.innerHTML = history.map(h =>
+      `<div class="history-item">${h.expr} = <span>${h.result}</span></div>`
+    ).join('');
+  }
+</script>
+</body>
+</html>
